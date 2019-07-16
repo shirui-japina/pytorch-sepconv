@@ -34,7 +34,7 @@ def main(args):
         command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
         result = os.system(command)
         
-        if (index + args.step) > len(list_image):
+        if (index + args.step) > (len(list_image) - 1):
             break
 
 def tryint(s):
