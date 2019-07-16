@@ -5,7 +5,6 @@ import re
 
 import cv2
 
-
 def argument():
     parser = argparse.ArgumentParser(
         usage = "run the system 'pytorch-sepconv' repeatedly."
@@ -33,11 +32,9 @@ def main(args):
         name_out_and_ext = os.path.basename(list_image_soted[index])
         name_out, ext = os.path.splitext(name_out_and_ext)
         image_out = os.path.join(args.dir_output, "{}_.png".format(name_out))
-        
+
         command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
         result = os.system(command)
-        
-
 
 def tryint(s):
     try:
