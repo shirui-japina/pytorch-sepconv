@@ -28,8 +28,9 @@ def main(args):
         image_first = list_image[index]
         image_second = list_image[index + args.step]
 
-        name_out = os.path.basename(list_image[index]) + "_"
-        image_out = os.path.join(args.dir_output, "{}.png".format(name_out))
+        name_out_and_ext = os.path.basename(list_image[index])
+        name_out, ext = os.path.splitext(name_out_ext)
+        image_out = os.path.join(args.dir_output, "{}_.png".format(name_out))
         command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
         result = os.system(command)
         
