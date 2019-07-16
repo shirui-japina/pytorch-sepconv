@@ -25,17 +25,19 @@ def main(args):
     os.makedirs(args.dir_output, exist_ok=True)
 
     for index in range(0, len(list_image_soted), 1):
+        if (index + args.step) > (len(list_image) - 1):
+            break
+
         image_first = list_image_soted[index]
         image_second = list_image_soted[index + args.step]
-
         name_out_and_ext = os.path.basename(list_image_soted[index])
         name_out, ext = os.path.splitext(name_out_and_ext)
         image_out = os.path.join(args.dir_output, "{}_.png".format(name_out))
+        
         command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
         result = os.system(command)
         
-        if (index + args.step) > (len(list_image) - 1):
-            break
+
 
 def tryint(s):
     try:
