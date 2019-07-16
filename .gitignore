@@ -3,3 +3,4 @@ network-lf.pytorch
 network-l1.pytorch
 out.png
 sepconv/__pycache__/sepconv.cpython-36.pyc
+__pycache__/run.cpython-36.pyc
