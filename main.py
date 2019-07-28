@@ -19,16 +19,18 @@ def argument():
 def main(args):
     path_image = os.path.join(args.dir_input, "*")
     list_image = glob.glob(path_image)
-    # list_image.sort()
-    list_image_soted = sort_humanly(list_image)
+    list_image = sort_humanly(list_image)
     os.makedirs(args.dir_output, exist_ok=True)
 
-    for index in range(0, len(list_image_soted), 1):
+    num_image = len(list_image)
+    count_image = 0
+
+    for index in range(0, len(list_image), 1):
         if (index + args.step) > (len(list_image) - 1):
             break
 
-        image_first = list_image_soted[index]
-        image_second = list_image_soted[index + args.step]
+        image_first = list_image[index]
+        image_second = list_image[index + args.step]
         
         # convert to RGB
         image_first_temp = cv2.imread(image_first, flags=3)
@@ -41,7 +43,8 @@ def main(args):
         cv2.imwrite(path_second, image_second_temp)
         image_second = path_second
 
-        name_out_and_ext = os.path.basename(list_image_soted[index])
+        # run command
+        name_out_and_ext = os.path.basename(list_image[index])
         name_out, ext = os.path.splitext(name_out_and_ext)
         image_out = os.path.join(args.dir_output, "{}_.tiff".format(name_out))
 
@@ -49,6 +52,8 @@ def main(args):
         result = os.system(command)
         # if AttributeError: module 'sepconv' has no attribute 'FunctionSepconv'
         # check the environment whethere is 'env-pytorch-sepconv' or not.
+        count_image += 1
+        print("finished: {:.2%}".format(count_image / num_image))
 
 
 def sort_humanly(v_list):
