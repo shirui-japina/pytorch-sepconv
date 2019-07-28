@@ -1,15 +1,16 @@
 #!/usr/bin/env python
-
-import torch
-
 import getopt
 import math
-import numpy
 import os
+import sys
+import warnings
+
+import numpy
 import PIL
 import PIL.Image
-import sys
+import torch
 
+warnings.filterwarnings("ignore")
 try:
 	from sepconv import sepconv # the custom separable convolution layer
 except:
