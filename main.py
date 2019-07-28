@@ -36,16 +36,17 @@ def main(args):
         command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
         result = os.system(command)
 
-def tryint(s):
-    try:
-        return int(s)
-    except ValueError:
-        return s
-
-def str2int(v_str):
-    return [tryint(sub_str) for sub_str in re.split('([0-9]+)', v_str)]
 
 def sort_humanly(v_list):
+    def tryint(s):
+        try:
+            return int(s)
+        except ValueError:
+            return s
+
+    def str2int(v_str):
+        return [tryint(sub_str) for sub_str in re.split('([0-9]+)', v_str)]
+
     return sorted(v_list, key=str2int)
 
 if __name__ == "__main__":
