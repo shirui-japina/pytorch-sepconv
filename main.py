@@ -11,7 +11,7 @@ def argument():
         )
     parser.add_argument("--dir-input", type=str, help="dir of images to input.")
     parser.add_argument("--dir-output", type=str, help="dir of images to output.")
-    parser.add_argument("--step", type=int, help="step between the two images.")
+    parser.add_argument("--step", type=int, help="step between the two images.(how many times have to use sepconv)")
     args = parser.parse_args()
 
     return args
@@ -31,7 +31,7 @@ def main(args):
         image_second = list_image_soted[index + args.step]
         name_out_and_ext = os.path.basename(list_image_soted[index])
         name_out, ext = os.path.splitext(name_out_and_ext)
-        image_out = os.path.join(args.dir_output, "{}_.png".format(name_out))
+        image_out = os.path.join(args.dir_output, "{}_.tiff".format(name_out))
 
         command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
         result = os.system(command)
