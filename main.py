@@ -79,17 +79,12 @@ def get_info_step(args, each_seriesuid):
         # TODO: calculate the [info_steo] from [info_mhd]
         # maybe the logic will change later
         info_step = 0
-        element_spacing_z = info_mhd.element_spacing_z
-
-        condition_x = ((element_spacing_z / 2) > info_mhd.element_spacing_x)
-        condition_y = ((element_spacing_z / 2) > info_mhd.element_spacing_y)
-
-        while condition_x and condition_y:
+        while True:
+            condition_x = ((info_mhd.element_spacing_z / (info_step + 1)) <= info_mhd.element_spacing_x)
+            condition_y = ((info_mhd.element_spacing_z / (info_step + 1)) <= info_mhd.element_spacing_y)
+            if condition_x and condition_y:
+                break
             info_step += 1
-            element_spacing_z *= 0.5
-            condition_x = ((element_spacing_z / 2) > info_mhd.element_spacing_x)
-            condition_y = ((element_spacing_z / 2) > info_mhd.element_spacing_y)
-
         return info_step
 
     # check the mode
@@ -117,6 +112,29 @@ def convert_to_rgb(args, each_seriesuid, path_image):
     path_converted = os.path.join(args.dir_output, folder_subset, id, name_image)
     os.makedirs(os.path.dirname(path_converted), exist_ok=True)
     cv2.imwrite(path_converted, image_converted)
+
+
+'''
+        # run command
+        name_out_and_ext = os.path.basename(list_image[index])
+        name_out, ext = os.path.splitext(name_out_and_ext)
+        image_out = os.path.join(args.dir_output, "{}_.tiff".format(name_out))
+
+        command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
+        result = os.system(command)
+        # if AttributeError: module 'sepconv' has no attribute 'FunctionSepconv'
+        # check the environment whethere is 'env-pytorch-sepconv' or not.
+        count_image += 1
+        print("finished: {:.2%}".format(count_image / num_image))
+'''
+def run_command(args, each_seriesuid, path_image_first_temp, path_image_second_temp, info_step):
+    if info_step == 0:
+        # Actually do nothing.
+        None
+    elif info_step == 1:
+        
+    elif info_step == 3:
+        None
 
 def main(args):
     path_seriesuid = os.path.join(args.dir_input, "*")
@@ -146,54 +164,7 @@ def main(args):
             convert_to_rgb(args, each_seriesuid, path_image_second_temp)
 
             # algorithm maybe change later
-            # the path of output image
-
-            # run command
-'''
-        # run command
-        name_out_and_ext = os.path.basename(list_image[index])
-        name_out, ext = os.path.splitext(name_out_and_ext)
-        image_out = os.path.join(args.dir_output, "{}_.tiff".format(name_out))
-
-        command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
-        result = os.system(command)
-        # if AttributeError: module 'sepconv' has no attribute 'FunctionSepconv'
-        # check the environment whethere is 'env-pytorch-sepconv' or not.
-        count_image += 1
-        print("finished: {:.2%}".format(count_image / num_image))
-'''
-
-'''
-    for index in range(0, len(list_image), 1):
-        if (index + args.step) > (len(list_image) - 1):
-            break
-
-        image_first = list_image[index]
-        image_second = list_image[index + args.step]
-        
-        # convert to RGB
-        image_first_temp = cv2.imread(image_first, flags=3)
-        path_first = os.path.join(args.dir_output, os.path.basename(image_first))
-        cv2.imwrite(path_first, image_first_temp)
-        image_first = path_first
-
-        image_second_temp = cv2.imread(image_second, flags=3)
-        path_second = os.path.join(args.dir_output, os.path.basename(image_second))
-        cv2.imwrite(path_second, image_second_temp)
-        image_second = path_second
-
-        # run command
-        name_out_and_ext = os.path.basename(list_image[index])
-        name_out, ext = os.path.splitext(name_out_and_ext)
-        image_out = os.path.join(args.dir_output, "{}_.tiff".format(name_out))
-
-        command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
-        result = os.system(command)
-        # if AttributeError: module 'sepconv' has no attribute 'FunctionSepconv'
-        # check the environment whethere is 'env-pytorch-sepconv' or not.
-        count_image += 1
-        print("finished: {:.2%}".format(count_image / num_image))
-'''
+            run_command(args, each_seriesuid, path_image_first_temp, path_image_second_temp, info_step)
 
 if __name__ == "__main__":
     args = argument()
