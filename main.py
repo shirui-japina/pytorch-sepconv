@@ -18,11 +18,15 @@ def argument():
     parser.add_argument("--dir-input", type=str, help="dir of images to input. It should be one of the folders naming 'subset*' from data set LUNA16.")
     parser.add_argument("--step", type=int, default=None, help="step between the two images.(how many times have to use sepconv repeatedly)")
     parser.add_argument("--dir-mhd", type=str, default=None, help="the dir of mhd.")
+
     args = parser.parse_args()
+    args.dir_output = dir_output
 
     return args
 
 def sort_humanly(v_list):
+    # used to sort images in folder [whole_image], 
+    # and not to sort folders [seriesuid] in [subset*].
     def tryint(s):
         try:
             return int(s)
@@ -34,15 +38,47 @@ def sort_humanly(v_list):
 
     return sorted(v_list, key=str2int)
 
+def get_info_step(args, each_seriesuid):
+    def get_info_mhd(args, each_seriesuid):
+        name_ext_mhd = os.path.basename(each_seriesuid + '.mhd')
+        path_mhd = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3d-rnn', 'data', 'luna16', 'mhd', name_ext_mhd)
+        file_mhd = open(path_mhd)
+        for mhd_row in file_mhd:
+            print(mhd_row)
+
+    def get_step_from_mhd():
+        None
+        
+
+    # check the mode
+    if args.step:
+        info_step = args.step
+    elif args.dir_mhd:
+        info_mhd = get_info_mhd(args, each_seriesuid)
+        info_step = get_step_from_mhd(info_mhd)
+    else:
+        print('please input one of ([--step] or [--dir-mhd])')
+    
+    return info_step
+
 def main(args):
-    path_image = os.path.join(args.dir_input, "*")
-    list_image = glob.glob(path_image)
-    list_image = sort_humanly(list_image)
+    path_seriesuid = os.path.join(args.dir_input, "*")
+    list_seriesuid = glob.glob(path_seriesuid) # list for all the seriesuid folders
+
+    #make sure there being the dir of output
     os.makedirs(args.dir_output, exist_ok=True)
 
-    num_image = len(list_image)
-    count_image = 0
+    for each_seriesuid in list_seriesuid:
+        path_image = os.path.join(each_seriesuid, 'whole_image', '*.tiff')
+        list_image = glob.glob(path_image)
+        list_image = sort_humanly(list_image)
+        
+        info_step = get_info_step(args, each_seriesuid)
 
+        for each_image in list_image: # all the images of a CT sequence
+            None
+
+'''
     for index in range(0, len(list_image), 1):
         if (index + args.step) > (len(list_image) - 1):
             break
@@ -72,6 +108,7 @@ def main(args):
         # check the environment whethere is 'env-pytorch-sepconv' or not.
         count_image += 1
         print("finished: {:.2%}".format(count_image / num_image))
+'''
 
 if __name__ == "__main__":
     args = argument()
