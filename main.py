@@ -103,7 +103,7 @@ def get_info_step(args, each_seriesuid):
     
     # the number of info_step should be odd number
     # or it need to insert the same two image generated in CT suquence.
-    if (info_step % 2) == 0:
+    if ((info_step % 2) == 0) and info_step > 0:
         info_step -= 1
 
     return info_step
