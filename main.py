@@ -61,7 +61,7 @@ def get_info_step(args, each_seriesuid):
             if mhd_row.split(' ')[0] == 'ElementSpacing':
                 element_spacing_x = mhd_row.split(' ')[2]
                 element_spacing_y = mhd_row.split(' ')[3]
-                element_spacing_z = mhd_row.split(' ')[4]
+                element_spacing_z = mhd_row.split(' ')[4].replace('\n','')
 
         info_mhd = InfoMHD(
             offset_x=offset_x,
@@ -74,9 +74,8 @@ def get_info_step(args, each_seriesuid):
         return info_mhd
 
     def get_step_from_mhd(info_mhd):
-        # calculate the [info_steo] from [info_mhd]
+        # TODO: calculate the [info_steo] from [info_mhd]
         # maybe the logic will change later
-        # TODO: important block
 
         return info_step
 
@@ -103,6 +102,7 @@ def main(args):
         list_image = glob.glob(path_image)
         list_image = sort_humanly(list_image)
         
+        # [info_step] should be different for every [seriesuid CT image]
         info_step = get_info_step(args, each_seriesuid)
 
         for each_image in list_image: # all the images of a CT sequence
