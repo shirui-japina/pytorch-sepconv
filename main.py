@@ -9,15 +9,30 @@ def argument():
     dir_output = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "luna16")
     parser = argparse.ArgumentParser(
         usage = "To run the system [pytorch-sepconv] repeatedly.\n"
-            "NOTE that the argument [--dir-input] should point to [subset*] of LUNA16.\n"
-            "[the dir of output] will be:\n"
+            "(1.NOTE that the argument [--dir-input] should point to [subset*] of LUNA16.\n"
+            "(2.You can set (the repeatedly times) by input [--step] mannually\n"
+            "or input the [--dir-mhd] to set that automatically.\n"
+            "(3.[the dir of output] will be:\n"
             "{}".format(dir_output)
             )
     parser.add_argument("--dir-input", type=str, help="dir of images to input. It should be one of the folders naming 'subset*' from data set LUNA16.")
-    parser.add_argument("--step", type=int, help="step between the two images.(how many times have to use sepconv repeatedly)")
+    parser.add_argument("--step", type=int, default=None, help="step between the two images.(how many times have to use sepconv repeatedly)")
+    parser.add_argument("--dir-mhd", type=str, default=None, help="the dir of mhd.")
     args = parser.parse_args()
 
     return args
+
+def sort_humanly(v_list):
+    def tryint(s):
+        try:
+            return int(s)
+        except ValueError:
+            return s
+
+    def str2int(v_str):
+        return [tryint(sub_str) for sub_str in re.split('([0-9]+)', v_str)]
+
+    return sorted(v_list, key=str2int)
 
 def main(args):
     path_image = os.path.join(args.dir_input, "*")
@@ -57,19 +72,6 @@ def main(args):
         # check the environment whethere is 'env-pytorch-sepconv' or not.
         count_image += 1
         print("finished: {:.2%}".format(count_image / num_image))
-
-
-def sort_humanly(v_list):
-    def tryint(s):
-        try:
-            return int(s)
-        except ValueError:
-            return s
-
-    def str2int(v_str):
-        return [tryint(sub_str) for sub_str in re.split('([0-9]+)', v_str)]
-
-    return sorted(v_list, key=str2int)
 
 if __name__ == "__main__":
     args = argument()
