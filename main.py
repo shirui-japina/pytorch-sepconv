@@ -55,13 +55,13 @@ def get_info_step(args, each_seriesuid):
         file_mhd = open(path_mhd)
         for mhd_row in file_mhd:
             if mhd_row.split(' ')[0] == 'Offset':
-                offset_x = mhd_row.split(' ')[2]
-                offset_y = mhd_row.split(' ')[3]
-                offset_z = mhd_row.split(' ')[4].replace('\n', '')
+                offset_x = float(mhd_row.split(' ')[2])
+                offset_y = float(mhd_row.split(' ')[3])
+                offset_z = float(mhd_row.split(' ')[4].replace('\n', ''))
             if mhd_row.split(' ')[0] == 'ElementSpacing':
-                element_spacing_x = mhd_row.split(' ')[2]
-                element_spacing_y = mhd_row.split(' ')[3]
-                element_spacing_z = mhd_row.split(' ')[4].replace('\n','')
+                element_spacing_x = float(mhd_row.split(' ')[2])
+                element_spacing_y = float(mhd_row.split(' ')[3])
+                element_spacing_z = float(mhd_row.split(' ')[4].replace('\n',''))
 
         info_mhd = InfoMHD(
             offset_x=offset_x,
@@ -76,6 +76,17 @@ def get_info_step(args, each_seriesuid):
     def get_step_from_mhd(info_mhd):
         # TODO: calculate the [info_steo] from [info_mhd]
         # maybe the logic will change later
+        info_step = 0
+        element_spacing_z = info_mhd.element_spacing_z
+
+        condition_x = ((element_spacing_z / 2) > info_mhd.element_spacing_x)
+        condition_y = ((element_spacing_z / 2) > info_mhd.element_spacing_y)
+
+        while condition_x and condition_y:
+            info_step += 1
+            element_spacing_z *= 0.5
+            condition_x = ((element_spacing_z / 2) > info_mhd.element_spacing_x)
+            condition_y = ((element_spacing_z / 2) > info_mhd.element_spacing_y)
 
         return info_step
 
