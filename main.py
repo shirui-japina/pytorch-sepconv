@@ -23,7 +23,9 @@ def argument():
             "(2.You can set (the repeatedly times) by input [--step] mannually\n"
             "or input the [--dir-mhd] to set that automatically.\n"
             "(3.[the dir of output] will be:\n"
-            "{}".format(dir_output)
+            "{}\n"
+            "NOTE that at present, we think the number of info_step should be odd number\n"
+            "or it will need to insert the same two images generated in CT suquence.".format(dir_output)
             )
     parser.add_argument("--dir-input", type=str, help="dir of images to input. It should be one of the folders naming 'subset*' from data set LUNA16.")
     parser.add_argument("--step", type=int, default=None, help="step between the two images.(how many times have to use sepconv repeatedly)")
@@ -99,6 +101,11 @@ def get_info_step(args, each_seriesuid):
     else:
         print('please input one of ([--step] or [--dir-mhd])')
     
+    # the number of info_step should be odd number
+    # or it need to insert the same two image generated in CT suquence.
+    if (info_step % 2) == 0:
+        info_step -= 1
+
     return info_step
 
 def convert_to_rgb(args, each_seriesuid, path_image):
@@ -138,6 +145,7 @@ def main(args):
             convert_to_rgb(args, each_seriesuid, path_image_first_temp)
             convert_to_rgb(args, each_seriesuid, path_image_second_temp)
 
+            # algorithm maybe change later
             # the path of output image
 
             # run command
