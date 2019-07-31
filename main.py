@@ -101,6 +101,16 @@ def get_info_step(args, each_seriesuid):
     
     return info_step
 
+def convert_to_rgb(args, each_seriesuid, path_image):
+    image_converted = cv2.imread(path_image, flags=3)
+    folder_subset = os.path.basename(args.dir_input)
+    id = os.path.basename(each_seriesuid)
+    name_image = os.path.basename(path_image)
+
+    path_converted = os.path.join(args.dir_output, folder_subset, id, name_image)
+    os.makedirs(os.path.dirname(path_converted), exist_ok=True)
+    cv2.imwrite(path_converted, image_converted)
+
 def main(args):
     path_seriesuid = os.path.join(args.dir_input, "*")
     list_seriesuid = glob.glob(path_seriesuid) # list for all the seriesuid folders
@@ -116,8 +126,34 @@ def main(args):
         # [info_step] should be different for every [seriesuid CT image]
         info_step = get_info_step(args, each_seriesuid)
 
-        for each_image in list_image: # all the images of a CT sequence
-            None
+        # TODO use sepconv to generate images (by [info-step])
+        for index in range(len(list_image)): # all the images of a CT sequence
+            if (index + info_step) > (len(list_image) - 1):
+                break
+
+            path_image_first_temp = list_image[index]
+            path_image_second_temp = list_image[index + info_step]
+
+            # convert to RBG and save
+            convert_to_rgb(args, each_seriesuid, path_image_first_temp)
+            convert_to_rgb(args, each_seriesuid, path_image_second_temp)
+
+            # the path of output image
+
+            # run command
+'''
+        # run command
+        name_out_and_ext = os.path.basename(list_image[index])
+        name_out, ext = os.path.splitext(name_out_and_ext)
+        image_out = os.path.join(args.dir_output, "{}_.tiff".format(name_out))
+
+        command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
+        result = os.system(command)
+        # if AttributeError: module 'sepconv' has no attribute 'FunctionSepconv'
+        # check the environment whethere is 'env-pytorch-sepconv' or not.
+        count_image += 1
+        print("finished: {:.2%}".format(count_image / num_image))
+'''
 
 '''
     for index in range(0, len(list_image), 1):
