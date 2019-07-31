@@ -5,6 +5,16 @@ import re
 
 import cv2
 
+class InfoMHD(): # to carry the information get from mhd
+    def __init__(self, offset_x, offset_y, offset_z, element_spacing_x, element_spacing_y, element_spacing_z):
+        self.offset_x = offset_x
+        self.offset_y = offset_y
+        self.offset_z = offset_z
+
+        self.element_spacing_x = element_spacing_x
+        self.element_spacing_y = element_spacing_y
+        self.element_spacing_z = element_spacing_z
+
 def argument():
     dir_output = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "luna16")
     parser = argparse.ArgumentParser(
@@ -44,11 +54,31 @@ def get_info_step(args, each_seriesuid):
         path_mhd = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), '3d-rnn', 'data', 'luna16', 'mhd', name_ext_mhd)
         file_mhd = open(path_mhd)
         for mhd_row in file_mhd:
-            print(mhd_row)
+            if mhd_row.split(' ')[0] == 'Offset':
+                offset_x = mhd_row.split(' ')[2]
+                offset_y = mhd_row.split(' ')[3]
+                offset_z = mhd_row.split(' ')[4].replace('\n', '')
+            if mhd_row.split(' ')[0] == 'ElementSpacing':
+                element_spacing_x = mhd_row.split(' ')[2]
+                element_spacing_y = mhd_row.split(' ')[3]
+                element_spacing_z = mhd_row.split(' ')[4]
 
-    def get_step_from_mhd():
-        None
-        
+        info_mhd = InfoMHD(
+            offset_x=offset_x,
+            offset_y=offset_y,
+            offset_z=offset_z,
+            element_spacing_x=element_spacing_x,
+            element_spacing_y=element_spacing_y,
+            element_spacing_z=element_spacing_z,
+        )
+        return info_mhd
+
+    def get_step_from_mhd(info_mhd):
+        # calculate the [info_steo] from [info_mhd]
+        # maybe the logic will change later
+        # TODO: important block
+
+        return info_step
 
     # check the mode
     if args.step:
