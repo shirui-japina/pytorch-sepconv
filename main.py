@@ -139,7 +139,10 @@ def main(args):
     #make sure there being the dir of output
     os.makedirs(args.dir_output, exist_ok=True)
 
+    num_seriesuid = len(list_seriesuid)
+    count_seriesuid = 0
     for each_seriesuid in list_seriesuid:
+        count_seriesuid += 1
         path_image = os.path.join(each_seriesuid, 'whole_image', '*.tiff')
         list_image = glob.glob(path_image)
         list_image = sort_humanly(list_image)
@@ -161,6 +164,8 @@ def main(args):
 
             # algorithm maybe change later
             run_command(args, each_seriesuid, pathpath_converted_first, pathpath_converted_second, info_step)
+        
+        print("finished: {:.2%}".format(count_seriesuid / num_seriesuid))
 
 if __name__ == "__main__":
     args = argument()
