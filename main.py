@@ -113,26 +113,22 @@ def convert_to_rgb(args, each_seriesuid, path_image):
     os.makedirs(os.path.dirname(path_converted), exist_ok=True)
     cv2.imwrite(path_converted, image_converted)
 
+    return path_converted
 
-'''
-        # run command
-        name_out_and_ext = os.path.basename(list_image[index])
-        name_out, ext = os.path.splitext(name_out_and_ext)
-        image_out = os.path.join(args.dir_output, "{}_.tiff".format(name_out))
-
-        command = "python run.py --model lf --first {} --second {} --out {}".format(image_first, image_second, image_out)
-        result = os.system(command)
-        # if AttributeError: module 'sepconv' has no attribute 'FunctionSepconv'
-        # check the environment whethere is 'env-pytorch-sepconv' or not.
-        count_image += 1
-        print("finished: {:.2%}".format(count_image / num_image))
-'''
-def run_command(args, each_seriesuid, path_image_first_temp, path_image_second_temp, info_step):
+def run_command(args, seriesuid, path_image_first, path_image_second, info_step):
     if info_step == 0:
         # Actually do nothing.
         None
     elif info_step == 1:
-        
+        name_and_ext_first_image = os.path.splitext(os.path.basename(path_image_first))
+        name_generated_image = name_and_ext_first_image[0] + "_" + name_and_ext_first_image[1]
+        name_folder = os.path.basename(os.path.dirname(seriesuid))
+        path_generated_image = os.path.join(args.dir_output, name_folder, os.path.basename(seriesuid), name_generated_image)
+
+        # run command
+        command = "python run.py --model lf --first {} --second {} --out {}".format(path_image_first, path_image_second, path_generated_image)
+        result = os.system(command)
+
     elif info_step == 3:
         None
 
@@ -160,14 +156,16 @@ def main(args):
             path_image_second_temp = list_image[index + info_step]
 
             # convert to RBG and save
-            convert_to_rgb(args, each_seriesuid, path_image_first_temp)
-            convert_to_rgb(args, each_seriesuid, path_image_second_temp)
+            pathpath_converted_first = convert_to_rgb(args, each_seriesuid, path_image_first_temp)
+            pathpath_converted_second = convert_to_rgb(args, each_seriesuid, path_image_second_temp)
 
             # algorithm maybe change later
-            run_command(args, each_seriesuid, path_image_first_temp, path_image_second_temp, info_step)
+            run_command(args, each_seriesuid, pathpath_converted_first, pathpath_converted_second, info_step)
 
 if __name__ == "__main__":
     args = argument()
     main(args)
 
     print("sepconv complete.")
+    # if AttributeError: module 'sepconv' has no attribute 'FunctionSepconv'
+    # check the environment whethere is 'env-pytorch-sepconv' or not.
