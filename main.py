@@ -153,6 +153,7 @@ def run_command(args, seriesuid, path_image_first, path_image_second, info_step)
         result = os.system(command)
 
     elif info_step == 5:
+        print('--------')
         print('infor_step gets value 5')
 
 def main(args):
@@ -173,6 +174,8 @@ def main(args):
         # [info_step] should be different for every [seriesuid CT image]
         info_step = get_info_step(args, each_seriesuid)
 
+        num_image = len(list_image)
+        count_image = 0
         # TODO use sepconv to generate images (by [info-step])
         for index in range(len(list_image)): # all the images of a CT sequence
             path_image_first_temp = list_image[index]
@@ -184,6 +187,7 @@ def main(args):
 
             # algorithm maybe change later
             run_command(args, each_seriesuid, pathpath_converted_first, pathpath_converted_second, info_step)
+            print("sub finisht: {:.2%}".format(count_image / num_image))
         
         print("finished: {:.2%}".format(count_seriesuid / num_seriesuid))
 
