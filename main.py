@@ -16,23 +16,23 @@ class InfoMHD(): # to carry the information get from mhd
         self.element_spacing_z = element_spacing_z
 
 def argument():
-    dir_output = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "luna16")
+    # default value
+    dir_output_relatively = os.path.join("data", "luna16")
+    dir_output = os.path.join(os.path.dirname(os.path.abspath(__file__)), dir_output_relatively)
+
     parser = argparse.ArgumentParser(
         usage = "To run the system [pytorch-sepconv] repeatedly.\n"
-            "(1.NOTE that the argument [--dir-input] should point to [subset*] of LUNA16.\n"
+            "(1.NOTE that the argument [--dir-input] should point to [.\\subset\\*\\] of LUNA16.\n"
             "(2.You can set (the repeatedly times) by input [--step] mannually\n"
             "or input the [--dir-mhd] to set that automatically.\n"
-            "(3.[the dir of output] will be:\n"
-            "{}\n"
             "NOTE that at present, we think the number of info_step should be odd number\n"
-            "or it will need to insert the same two images generated in CT suquence.".format(dir_output)
+            "or it will need to insert the same two images generated in CT suquence."
             )
-    parser.add_argument("--dir-input", type=str, help="dir of images to input. It should be one of the folders naming 'subset*' from data set LUNA16.")
+    parser.add_argument("--dir-input", type=str, help="dir of images to input. It should be one of the folders naming .\\subset*\\*\\ from data set LUNA16.")
     parser.add_argument("--step", type=int, default=None, help="step between the two images.(how many times have to use sepconv repeatedly)")
     parser.add_argument("--dir-mhd", type=str, default=None, help="the dir of mhd.")
-
+    parser.add_argument("--dir-output", type=str, default=dir_output, help="dir of generated images to output. Default:{}. Output tree: .\\subset*\\..\\".format(dir_output))
     args = parser.parse_args()
-    args.dir_output = dir_output
 
     return args
 
@@ -130,7 +130,30 @@ def run_command(args, seriesuid, path_image_first, path_image_second, info_step)
         result = os.system(command)
 
     elif info_step == 3:
-        None
+        name_and_ext_first_image = os.path.splitext(os.path.basename(path_image_first))
+        name_generated_image_upper = name_and_ext_first_image[0] + "_" + name_and_ext_first_image[1]
+        name_generated_image_middle = name_and_ext_first_image[0] + "__" + name_and_ext_first_image[1]
+        name_generated_image_downer = name_and_ext_first_image[0] + "___" + name_and_ext_first_image[1]
+
+        name_folder = os.path.basename(os.path.dirname(seriesuid))
+
+        path_generated_image_upper = os.path.join(args.dir_output, name_folder, os.path.basename(seriesuid), name_generated_image_upper)
+        path_generated_image_middle = os.path.join(args.dir_output, name_folder, os.path.basename(seriesuid), name_generated_image_middle)
+        path_generated_image_downer = os.path.join(args.dir_output, name_folder, os.path.basename(seriesuid), name_generated_image_downer)
+
+        # run command
+        # middle
+        command = "python run.py --model lf --first {} --second {} --out {}".format(path_image_first, path_image_second, path_generated_image_middle)
+        result = os.system(command)
+        # upper
+        command = "python run.py --model lf --first {} --second {} --out {}".format(path_image_first, path_generated_image_middle, path_generated_image_upper)
+        result = os.system(command)
+        # downer
+        command = "python run.py --model lf --first {} --second {} --out {}".format(path_generated_image_middle, path_image_second, path_generated_image_downer)
+        result = os.system(command)
+
+    elif info_step == 5:
+        print('infor_step gets value 5')
 
 def main(args):
     path_seriesuid = os.path.join(args.dir_input, "*")
