@@ -175,11 +175,8 @@ def main(args):
 
         # TODO use sepconv to generate images (by [info-step])
         for index in range(len(list_image)): # all the images of a CT sequence
-            if (index + info_step) > (len(list_image) - 1):
-                break
-
             path_image_first_temp = list_image[index]
-            path_image_second_temp = list_image[index + info_step]
+            path_image_second_temp = list_image[index + 1]
 
             # convert to RBG and save
             pathpath_converted_first = convert_to_rgb(args, each_seriesuid, path_image_first_temp)
