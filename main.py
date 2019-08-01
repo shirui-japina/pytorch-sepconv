@@ -187,7 +187,7 @@ def main(args):
 
             # algorithm maybe change later
             run_command(args, each_seriesuid, pathpath_converted_first, pathpath_converted_second, info_step)
-            print("sub finisht: {:.2%}".format(count_image / num_image))
+            print("sub finished: {:.2%}".format(count_image / num_image))
         
         print("finished: {:.2%}".format(count_seriesuid / num_seriesuid))
 
