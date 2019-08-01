@@ -177,7 +177,7 @@ def main(args):
         num_image = len(list_image)
         count_image = 0
         # TODO use sepconv to generate images (by [info-step])
-        for index in range(len(list_image)): # all the images of a CT sequence
+        for index in range(len(list_image) - 1): # all the images of a CT sequence except the last one
             count_image += 1
             path_image_first_temp = list_image[index]
             path_image_second_temp = list_image[index + 1]
